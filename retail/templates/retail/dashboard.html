@@ -1,0 +1,57 @@
+{% extends "layout-split-2.html" %}
+
+{% load humanize %}
+
+{% load pagination_tags %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}retail/stylesheets/dashboard.css" />
+{% endblock %}
+
+{% block left %}
+<div class="module">
+<h2>{{ organization }}</h2>
+
+<table>
+    <tbody>
+        <tr>
+            <td>Registered staff:</td>
+            <td>{{ staff_count }}</td>
+        </tr>
+        <tr>
+            <td>Number of sales:</td>
+            <td>{{ sale_count }}</td>
+        </tr>
+        <tr>
+            <td>Revenue:</td>
+            <td>Tsh {{ total_revenue|intcomma }}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div class="module">
+<h2>Inventory</h2>
+{% for p in inventory_list %}
+	<div class="product_pie_outer">
+	<h4>{{ p.product }}</h4>
+        <div class="product_pie_inner">
+	<img src="http://chart.apis.google.com/chart?cht=p&chs=75x75&chd=t:{{ p.sale_count }},{{ p.stock_count }}"><br>
+	<div class="product_pie_label">{{ p.sale_count }} sold</div> 
+	<div class="product_pie_label">{{ p.stock_count }} in stock</div>
+
+</div>
+</div>
+{% endfor %}
+</div>              
+{% endblock %}
+{% block right %}
+<div class="module">
+<h2>Top Sellers</h2>
+{{ performance_table.as_html }}
+</div>
+<div class="module">
+<h2>Recent Sales</h2>
+<img src="http://chart.apis.google.com/chart?&chxt=x&chbh=a,4,7&chs=644x200&cht=bvs&chxl=0:|{% for s in sale_bars %}{% if forloop.last or forloop.first %}{{ s.label }}{% else %}|{{ s.label }}{% endif %}{% endfor %}&chd=t:{% for s in sale_bars %}{% if forloop.first %}{{ s.sale_count }}{% else %},{{ s.sale_count }}{% endif %}{% endfor %}" width="644" height="200" alt="" />
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "layout-split-2.html" %}
+{% load forms_tags %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}retail/stylesheets/sales.css" />
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.3/themes/base/jquery-ui.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+<script>
+$(function() {
+	$( "#id_purchase_date_0" ).datepicker({ dateFormat: 'yy-mm-dd' });
+});
+</script>
+{% endblock %}
+
+{% block left %}
+<div class="module">
+	<h2>Add a sale</h2>
+
+	<form action="" method="post">
+		{% render_form sale_form %}
+		{% csrf_token %}
+
+		<div class="submit">
+			<input type="submit" name="submit" value="Save" />
+		</div>
+	</form>
+</div>
+{% endblock %}
+{% block right %}
+{{ sale_table.as_html }}
+<div>
+<input type="button" onclick="location.href='export';" value="Export CSV"/>
+</div>
+{% endblock %}
