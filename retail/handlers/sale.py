@@ -20,7 +20,7 @@ class SaleHandler(KeywordHandler):
 
     def handle(self, sale_string):
         seller = self.msg.connection.contact
-        
+ self.msg.connection.contact)
         sale_result = self.verify_sale(sale_string, seller)
         if sale_result[0] == 0: #sale failed
             self.respond("ERROR: " + ', '.join(sale_result[1]) + ". Sale format: sale serial# firstname lastname mobile# price regioncode description" )
@@ -125,5 +125,5 @@ class SaleHandler(KeywordHandler):
                                'purchase_price': price,
                                'purchase_date': datetime.now(),
                                'region': region,
-                               'village': des})
+                               'description': des})
             return ([status, sale_dict, product_code])            
