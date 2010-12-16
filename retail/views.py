@@ -112,6 +112,9 @@ def csv_export(request):
         writer.writerow([s.purchase_date.date().strftime("%Y-%m-%d"), s.seller, s.serial, s.lname.capitalize(), s.fname.capitalize(), s.pri_phone, s.sec_phone,  s.get_region_display(), s.description])
     return response
 
-
+@login_required
+@user_passes_test(lambda u: u.get_profile().organization is not None)
+def advanced(request):
+    return render_to_response("retail/advanced.html", {}, context_instance=RequestContext(request))
 
 

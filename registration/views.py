@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.db import transaction
 from django.shortcuts import render_to_response, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from pikwa.forms import ContactForm
 from rapidsms.models import Contact
 from rapidsms.models import Connection
@@ -16,6 +17,7 @@ from .tables import ContactTable
 from .forms import BulkRegistrationForm
 
 @transaction.commit_on_success
+@login_required
 def registration(req, pk=None):
     contact = None
 
