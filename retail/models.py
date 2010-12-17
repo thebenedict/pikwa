@@ -121,11 +121,13 @@ class Sale(models.Model):
 
 class StockTransaction(models.Model):
 
+    CANCELLED = 3
     PENDING = 2
     ACCEPTED = 1
     REJECTED = 0
     
     STATUS_CHOICES = (
+        (CANCELLED, 'Canceled'),
         (PENDING, 'Pending'),
         (ACCEPTED, 'Accepted'),
         (REJECTED, 'Rejected'),

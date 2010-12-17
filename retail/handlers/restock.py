@@ -21,7 +21,15 @@ class RestockHandler(KeywordHandler):
         self.respond("Usage: restock (recipient) (code)(amount)\nExample: restock dnombo 5ew")
 
     def handle(self, text):
+        stocker = self.msg.connection.contact
+
         args = text.partition(' ')
+        print 'args[0] is: %s' % args[0]
+        if args[0] == 'cancel':
+            print "-------------------------> 0"
+            self.cancel_restocks(stocker)
+            return True
+        print "-------------------------> 1"
         target_alias = args[0].lower()
         restock_list = self.parse_restock_string(args[2].lower())
         if not restock_list:
@@ -34,8 +42,6 @@ class RestockHandler(KeywordHandler):
         except:
             self.respond("Sorry, user %s was not found. Please check your spelling and try again" % target_alias)
             return True
-        
-        stocker = self.msg.connection.contact
 
         errors = []
         stockouts = []
@@ -112,4 +118,44 @@ class RestockHandler(KeywordHandler):
             restock_list.append([code,amount])
         return restock_list
 
+    '''Cancels all restocks initiated by stocker, returning the pending stock to stocker.
+       This exists so that if stocker starts a restock, and the target never accepts or
+       rejects the transfer, they can get their stock back.'''  
+    def cancel_restocks(self, stocker):
+        print "--------------------> 2"
+        pending_restocks = StockTransaction.objects.filter(initiator = stocker, status = 2)
+        if not pending_restocks:
+            self.respond("No transactions were pending. current stock %s." % (self.get_current_stock(stocker)))
+            return True
+        for p in pending_restocks:
+            print "--------------------> 3"
+            stk_list = p.to_transfer.all()
+            for stk in stk_list:
+                existing = Stock.get_existing(stocker.alias, stk.product.code)
+                if existing:
+                    print "--------------------> 4"
+                    existing.stock_amount += stk.stock_amount
+                    existing.save()
+                    stk.delete()
+                else:
+                    print "--------------------> 5"
+                    stk.seller = stocker
+                    stk.save()
+            print "--------------------> 6"
+            p.status = 3
+            p.date_resolved = datetime.now()
+            p.save()
+        self.respond("All pending transfers canceled, current stock %s." % (self.get_current_stock(stocker)))
+        return True
 
+    def get_current_stock(self, usr):
+        cur_stock = Stock.objects.filter(seller=usr)
+        response = ""
+        if cur_stock is not None:
+            for s in list(cur_stock):
+                response += "%s %s, " % (s.stock_amount, s.product.display_name)
+            return response.rstrip()[:-1]
+        else:
+            return "not found."
+            
+        

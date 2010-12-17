@@ -29,6 +29,9 @@ class RejectHandler(PatternHandler):
                     existing.stock_amount += stk.stock_amount
                     existing.save()
                     stk.delete()
+                else:
+                    stk.seller = t.initiator
+                    stk.save()
             t.status = 0
             t.date_resolved = datetime.now()
             t.save()
