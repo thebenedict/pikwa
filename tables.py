@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 
-
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from djtables import Table, Column
@@ -68,4 +67,4 @@ class PerformanceTable(Table):
 
     #This doesn't work, need a new way to sort
     #class Meta:
-    #    order_by = 'revenue'
+        #order_by = "revenue"
