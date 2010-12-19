@@ -88,7 +88,13 @@ def sales(request, template_name="retail/sales.html"):
         print sale_form.errors.values()
         sale_form = SaleForm(data=request.POST)
         if sale_form.is_valid():
-            sale = sale_form.save()
+            #since sale.product is excluded from the from, get it from the
+            #first two characters of the serial no. The form validation
+            #checks that the product exists, and is in stock for the seller
+            #so this is probably a safe way to do it
+            sale = sale_form.save(commit=False)
+            sale.product = Product.by_code(sale.serial[0:2])
+            sale.save() 
             return HttpResponseRedirect(reverse(sales))
    
     return render_to_response(
@@ -106,7 +112,8 @@ def csv_export(request):
     response['Content-Disposition'] = 'attachment; filename=sales_export.csv'
 
     writer = csv.writer(response)
-    sale_list = Sale.objects.all().order_by('purchase_date')
+    org = request.user.get_profile().organization
+    sale_list = Sale.objects.filter(seller__organization=org).order_by('purchase_date')
     writer.writerow(['Sale date', 'Retailer', 'Serial #', 'Last name', 'First name', 'Primary phone', 'Secondary phone', 'Region', 'Location notes'])
     for s in sale_list:
         writer.writerow([s.purchase_date.date().strftime("%Y-%m-%d"), s.seller, s.serial, s.lname.capitalize(), s.fname.capitalize(), s.pri_phone, s.sec_phone,  s.get_region_display(), s.description])
