@@ -1,4 +1,5 @@
 from django.db import models
+from retail.models import Sale
 
 class MobileUser(models.Model):
     
@@ -16,6 +17,8 @@ class MobileUser(models.Model):
     alias = models.CharField(max_length = 12, unique = True, \
                              help_text = "Unique username, 12 characters, no spaces")
     organization = models.ForeignKey('retail.Organization')
+    cached_revenue = models.IntegerField(default = 0)
+    
 
     @classmethod
     def by_alias (cls, alias):

@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.admin.models import User
 from datetime import datetime
-from rapidsms.models import Contact
 
 class Product(models.Model):
     code = models.CharField(max_length=4, \
@@ -22,7 +21,7 @@ class Product(models.Model):
             return None
 
 class Stock(models.Model): 
-    seller       = models.ForeignKey(Contact)
+    seller       = models.ForeignKey('rapidsms.Contact')
     product      = models.ForeignKey(Product)
     stock_amount = models.IntegerField(default=0)
     
@@ -107,10 +106,21 @@ class Sale(models.Model):
     purchase_price    = models.DecimalField(max_digits=5, decimal_places=2, help_text="Purchase price of stove")
     region            = models.CharField(choices = REGION_CHOICES, max_length=1)
     description       = models.CharField(max_length=50, help_text="Village name or other description of user's location")    
-    seller            = models.ForeignKey(Contact)
+    seller            = models.ForeignKey('rapidsms.Contact')
     
     def __unicode__(self):
         return self.serial
+
+    def save(self):
+        #update the seller's revenue total
+        self.seller.cached_revenue += (self.purchase_price * 1000)
+        self.seller.save()
+        #update the seller's stock
+        current_stock = Stock.get_existing(self.seller.alias, self.product.code)
+        current_stock.stock_amount -= 1
+        current_stock.save()
+        #now save the sale itself        
+        super(Sale, self).save()
     
     @classmethod
     def by_serial (cls, serial):
@@ -134,8 +144,8 @@ class StockTransaction(models.Model):
     )
     
     to_transfer = models.ManyToManyField(Stock)
-    initiator = models.ForeignKey(Contact, related_name='stocktransaction_initiators')
-    recipient = models.ForeignKey(Contact, related_name='stocktransaction_recipients')
+    initiator = models.ForeignKey('rapidsms.Contact', related_name='stocktransaction_initiators')
+    recipient = models.ForeignKey('rapidsms.Contact', related_name='stocktransaction_recipients')
     status = models.IntegerField(choices = STATUS_CHOICES, max_length=1)
     date_initiated = models.DateTimeField()
     date_resolved = models.DateTimeField(null=True, blank=True)

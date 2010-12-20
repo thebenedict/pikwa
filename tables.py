@@ -37,6 +37,7 @@ class SaleTable(Table):
     class Meta:
         order_by = '-purchase_date'
 
+'''
 def _revenue(cell):
     sales = Sale.objects.filter(seller=cell.object)
     if sales:
@@ -44,6 +45,10 @@ def _revenue(cell):
         return int(sale_total['purchase_price__sum'] * 1000)
     else:
         return 0
+'''
+
+def _revenue(cell):
+    return cell.object.cached_revenue
 
 def _sale_count(cell):
     return Sale.objects.filter(seller=cell.object).count()
@@ -54,17 +59,21 @@ def _phone(cell):
     except:
         return ""
 
+#TODO This returns the latest sale globally, not for the specific 
+#seller. Blatantly wrong.
 def _last_sale(cell):
-    return Sale.objects.latest('purchase_date').purchase_date
+    try:
+        return Sale.objects.latest('purchase_date').purchase_date
+    except:
+        return "Never"
 
 class PerformanceTable(Table):
     alias          = Column()
     name           = Column()
-    revenue        = Column(name="Revenue (Tsh)", value=_revenue, sortable=False)
+    cached_revenue = Column(name="Revenue (Tsh)", value=_revenue, sortable=False)
     sale_count     = Column(name="Sales", value=_sale_count, sortable=False)
     phone          = Column(name="Phone", value=_phone, sortable=False)
     last_sale      = Column(name="Last Sale", value=_last_sale, sortable=False)
 
-    #This doesn't work, need a new way to sort
-    #class Meta:
-        #order_by = "revenue"
+    class Meta:
+        order_by = "-cached_revenue"

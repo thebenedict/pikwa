@@ -70,10 +70,13 @@ def dashboard(request, template_name="retail/dashboard.html"):
     except:
         context['total_revenue'] = 0
     context['inventory_list'] = inventory_list
-    context['performance_table'] = PerformanceTable(Contact.objects.filter(organization = org), request)
+    #TODO make top_sellers include only a fixed number of sellers, or paginate
+    top_sellers = Contact.objects.filter(organization=org)
+    context['performance_table'] = PerformanceTable(top_sellers, request)
     context['sale_bars'] = get_sale_bars(org)
 
-    return  render_to_response(template_name, {}, context_instance=RequestContext(request, context))
+    return  render_to_response(template_name, {},
+ context_instance=RequestContext(request, context))
 
 @login_required
 @user_passes_test(lambda u: u.get_profile().organization is not None)
@@ -85,10 +88,10 @@ def sales(request, template_name="retail/sales.html"):
     sale_form.fields['purchase_date']
 
     if request.method == "POST":
-        print sale_form.errors.values()
+        #print sale_form.errors.values()
         sale_form = SaleForm(data=request.POST)
         if sale_form.is_valid():
-            #since sale.product is excluded from the from, get it from the
+            #since sale.product is excluded from the form, get it from the
             #first two characters of the serial no. The form validation
             #checks that the product exists, and is in stock for the seller
             #so this is probably a safe way to do it
