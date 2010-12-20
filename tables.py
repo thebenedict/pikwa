@@ -37,16 +37,6 @@ class SaleTable(Table):
     class Meta:
         order_by = '-purchase_date'
 
-'''
-def _revenue(cell):
-    sales = Sale.objects.filter(seller=cell.object)
-    if sales:
-        sale_total = sales.aggregate(Sum('purchase_price'))
-        return int(sale_total['purchase_price__sum'] * 1000)
-    else:
-        return 0
-'''
-
 def _revenue(cell):
     return cell.object.cached_revenue
 
@@ -59,11 +49,9 @@ def _phone(cell):
     except:
         return ""
 
-#TODO This returns the latest sale globally, not for the specific 
-#seller. Blatantly wrong.
 def _last_sale(cell):
     try:
-        return Sale.objects.latest('purchase_date').purchase_date
+        return Sale.objects.filter(seller=cell.object).latest('purchase_date').purchase_date.date()
     except:
         return "Never"
 
