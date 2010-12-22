@@ -36,20 +36,9 @@ INSTALLED_BACKENDS = {
     #    "ENGINE": "rapidsms.backends.gsm,
     #    "PORT": "/dev/ttyUSB1"
     #},
-    #"ghana_roaming": {
-    #    "ENGINE": "rapidsms.backends.gsm",
-    #    "PORT": "/dev/ttyUSB0"
-    #},
     "message_tester": {
         "ENGINE": "rapidsms.backends.bucket"
     },
-    "slingshot_local": {
-        "ENGINE":  "rapidsms.backends.slingshot",
-        "public_key": "test",
-        "private_key": "test",
-        "port": 8888,
-        "slingshot_url": "http://localhost:8080/",
-        },
 }
 
 
