@@ -11,7 +11,7 @@ class NewProductHandler(KeywordHandler):
 
     """
 
-    keyword = "new|add"
+    keyword = "n|new|add"
 
     def help(self):
         user = self.msg.connection.contact
