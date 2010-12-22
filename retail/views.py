@@ -90,7 +90,7 @@ def sales(request, template_name="retail/sales.html"):
     if request.method == "POST":
         #print sale_form.errors.values()
         sale_form = SaleForm(data=request.POST)
-        if sale_form.is_valid():
+        if sale_form.is_validbbbbbbbbbbb():
             #since sale.product is excluded from the form, get it from the
             #first two characters of the serial no. The form validation
             #checks that the product exists, and is in stock for the seller

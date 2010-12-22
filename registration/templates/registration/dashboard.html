@@ -15,6 +15,12 @@
 		<a href="{% url registration %}" class="add">Add a Contact</a>
 	</div>{% endif %}-->
 </div>
+
+{% if contact %}
+<div class="module">
+        <h2>Seller Summary: {{ contact }}</h2>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block right %}

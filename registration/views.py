@@ -20,6 +20,7 @@ from .forms import BulkRegistrationForm
 @login_required
 def registration(req, pk=None):
     contact = None
+    sellerSummary = None
 
     if pk is not None:
         contact = get_object_or_404(
@@ -70,6 +71,7 @@ def registration(req, pk=None):
             #organization to that of the logged in user
             #################
             #instance=Contact(organization=req.user.get_profile().organization))
+        seller_summary = getSellerSummary(contact)
         bulk_form = BulkRegistrationForm()
 
     return render_to_response(
@@ -81,3 +83,8 @@ def registration(req, pk=None):
             "contact": contact
         }, context_instance=RequestContext(req)
     )
+
+def getSellerSummary(seller):
+    print "seller is: %s" % seller
+    if seller:
+        revenue = seller.cached_revenue

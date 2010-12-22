@@ -11,7 +11,7 @@ from retail.models import Sale, Stock, Product
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
-        exclude = ("connections", "organization", "language")
+        exclude = ("connections", "organization", "language", "cached_revenue")
 
 class SaleForm(forms.ModelForm):
     def clean_serial(self):
