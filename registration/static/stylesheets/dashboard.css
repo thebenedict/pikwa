@@ -14,3 +14,14 @@
 
     .col-1 col { width: 1%; }
     .col-1 col:last-child { width: auto; }
+
+.col-2 table {
+    width: 100%;
+}
+
+    .col-2 th,
+    .col-2 td {
+        white-space: nowrap;
+    }
+
+    .label { width: 40%; }

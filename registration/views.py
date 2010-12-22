@@ -13,6 +13,7 @@ from pikwa.forms import ContactForm
 from rapidsms.models import Contact
 from rapidsms.models import Connection
 from rapidsms.models import Backend
+from pikwa.retail.models import Sale, Stock
 from .tables import ContactTable
 from .forms import BulkRegistrationForm
 
@@ -80,11 +81,27 @@ def registration(req, pk=None):
             "contacts_table": ContactTable(Contact.objects.filter(organization=req.user.get_profile().organization), request=req),
             "contact_form": contact_form,
             "bulk_form": bulk_form,
-            "contact": contact
+            "contact": contact,
+            "seller_summary": seller_summary
         }, context_instance=RequestContext(req)
     )
 
 def getSellerSummary(seller):
-    print "seller is: %s" % seller
     if seller:
-        revenue = seller.cached_revenue
+        sale_count = Sale.objects.filter(seller=seller).count()
+        try:
+            last_sale_date = Sale.objects.filter(seller=seller).latest('purchase_date').purchase_date.date()
+        except:
+            last_sale_date = "Never"
+        stock_summary = []
+        stocks = Stock.objects.filter(seller=seller)
+        for s in stocks:
+            stock_summary.append({"product_name": s.product.full_name, "stock_amount": s.stock_amount})
+
+        seller_summary = {
+            "sale_count": sale_count,
+            "revenue": "%s Tsh" % seller.cached_revenue,
+            "last_sale_date": last_sale_date,
+            "stock_summary": stock_summary,
+        }
+        return seller_summary

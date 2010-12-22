@@ -15,20 +15,39 @@
 		<a href="{% url registration %}" class="add">Add a Contact</a>
 	</div>{% endif %}-->
 </div>
-
-{% if contact %}
-<div class="module">
-        <h2>Seller Summary: {{ contact }}</h2>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block right %}
-
-<div class="module">
 {% if contact %}
+<div class="module">
+        <h2>{{ contact }}</h2>
+        <table>
+            <tr>
+                <td class="label"> Sales: </td>
+                <td> {{ seller_summary.sale_count }} </td>
+            <tr>
+            </tr>
+                <td class="label"> Revenue: </td>
+                <td> {{ seller_summary.revenue }} </td>
+            </tr>
+            <tr>
+                <td class="label"> Last sale: </td>
+                <td> {{ seller_summary.last_sale_date }} </td>
+            </tr>
+            <tr>
+                <th colspan="2"><strong>Current Stock:</strong>{% if seller_summary.stock_summary %}{% else %} None{% endif %}</th>
+            </tr>
+            {% for s in seller_summary.stock_summary %}
+                <tr>
+                    <td class="label"> {{ s.product_name }}: </td>
+                    <td> {{ s.stock_amount }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+</div>
+<div class="module">
 	<h2>
-		Edit {{ contact }}
+		Edit
 	</h2>
 
 	<form action="" method="post">
@@ -40,7 +59,9 @@
 			<input type="submit" name="submit" value="Delete Contact" />{% endif %}-->
 		</div>
 	</form>
+</div>
 {% else %}
+<div class="module">
 	<h2>
 		Edit
 	</h2>
