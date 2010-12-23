@@ -39,10 +39,18 @@ class RegisterHandler(KeywordHandler):
         else:
             org = Organization.objects.get(code=org_code)
 
+        #if this is the first user registered to this organization, 
+        #make them a manager so they can add stock
+        registered_users = Contact.objects.filter(organization=org)
+        if not registered_users:
+            role = 1 #manager
+        else:
+            role = 0 #seller
+
         #check that the alias is not in use already
         existing = Contact.objects.filter(alias=alias)
         if not existing:
-            new_contact = Contact.objects.create(name = name, alias = alias, organization = org)
+            new_contact = Contact.objects.create(name = name, alias = alias, organization = org, role = role)
             self.msg.connection.contact = new_contact
             self.msg.connection.save()
             self.respond(
