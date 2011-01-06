@@ -96,7 +96,7 @@ def sales(request, template_name="retail/sales.html"):
             #checks that the product exists, and is in stock for the seller
             #so this is probably a safe way to do it
             sale = sale_form.save(commit=False)
-            sale.product = Product.by_code(sale.serial[0:2])
+            sale.product = Product.by_code(sale.serial[0:2].upper())
             sale.save() 
             return HttpResponseRedirect(reverse(sales))
    

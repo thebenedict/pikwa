@@ -17,7 +17,7 @@ class SaleForm(forms.ModelForm):
     def clean_serial(self):
         cleaned_data = self.cleaned_data
         serial = cleaned_data.get("serial")
-        code = serial[0:2]
+        code = serial[0:2].upper()
         print("Code from serial is %s" % code)
         try:
             prod = Product.objects.get(code=code)
@@ -32,7 +32,7 @@ class SaleForm(forms.ModelForm):
     def clean_seller(self):
         cleaned_data = self.cleaned_data
         
-        code = cleaned_data.get("serial")[0:2]
+        code = cleaned_data.get("serial")[0:2].upper()
         current_stock = Stock.get_existing(cleaned_data.get("seller").alias, code)
         prod = Product.objects.get(code=code)
         if current_stock is None or current_stock.stock_amount <= 0:
