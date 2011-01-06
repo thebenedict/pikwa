@@ -104,6 +104,11 @@ RAPIDSMS_TABS = [
     #("rapidsms.contrib.httptester.views.generate_identity", "Message Tester"),
 ]
 
+TEMPLATE_LOADERS = (
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                    'django.template.loaders.eggs.Loader'
+)
 
 # -------------------------------------------------------------------- #
 #                         BORING CONFIGURATION                         #
