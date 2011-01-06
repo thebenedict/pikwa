@@ -68,14 +68,21 @@ class SaleHandler(KeywordHandler):
         
         #check serial number
         sn = data_list[0].upper()
-        if len(sn) is not 7:
-            errors.append("SN must be 7 characters")
+        #FIXME Loosening the length check temporarily to accomodate new
+        #Envirofit SN format
+        ##############################################################
+        if len(sn) < 7:
+            errors.append("SN too short")
         if sn[0:2].isdigit():
             errors.append("SN must start with a product code")
         
         #get product code
         #this assumes product codes are all letters, and they're the only letters in a serial number
-        product_code = (''.join([l for l in sn if l.isalpha()])).upper()
+        #FIXME (?) Chaning this to accomodate Envirofit, but maybe it's 
+        #better anyway?
+        ##############################################################
+        #product_code = (''.join([l for l in sn if l.isalpha()])).upper()
+        product_code = sn[0:2]
         prod = Product.by_code(product_code)
         if not prod:
             errors.append("product %s not found" % product_code)
