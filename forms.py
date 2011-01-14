@@ -18,7 +18,6 @@ class SaleForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         serial = cleaned_data.get("serial")
         code = serial[0:2].upper()
-        print("Code from serial is %s" % code)
         try:
             prod = Product.objects.get(code=code)
         except:
