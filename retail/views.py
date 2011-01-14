@@ -36,7 +36,9 @@ def get_inventory_list(org):
 
 def get_sale_bars(org):
     sale_bars = []
-    sales = Sale.objects.filter(seller__organization=org)
+    sales = Sale.objects.all()
+    if org != "ALL":
+        sales = Sale.objects.filter(seller__organization=org)
     for i in range(0,30):
         d = datetime.now().date() - timedelta(days=i)
         day_start = datetime.combine(d, time.min)
@@ -78,6 +80,27 @@ def dashboard(request, template_name="retail/dashboard.html"):
     return  render_to_response(template_name, {},
  context_instance=RequestContext(request, context))
 
+@user_passes_test(lambda u: u.is_staff)
+def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
+    context = {}
+    org = "ALL"
+    
+    staff_count = Contact.objects.count()
+    sale_count = Sale.objects.count()
+    total_revenue = Sale.objects.aggregate(Sum('purchase_price'))
+
+    context['staff_count'] = staff_count
+    context['sale_count'] = sale_count
+    try:
+        context['total_revenue'] = int(total_revenue['purchase_price__sum']*1000)
+    except:
+        context['total_revenue'] = 0
+    context['sale_bars'] = get_sale_bars(org)
+
+    return  render_to_response(template_name, {},
+ context_instance=RequestContext(request, context))
+
+
 @login_required
 @user_passes_test(lambda u: u.get_profile().organization is not None)
 def sales(request, template_name="retail/sales.html"):
@@ -88,7 +111,6 @@ def sales(request, template_name="retail/sales.html"):
     sale_form.fields['purchase_date']
 
     if request.method == "POST":
-        #print sale_form.errors.values()
         sale_form = SaleForm(data=request.POST)
         if sale_form.is_valid():
             #since sale.product is excluded from the form, get it from the

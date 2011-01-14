@@ -6,7 +6,7 @@ from django.conf.urls.defaults import *
 from . import views
 
 urlpatterns = patterns('',
-    #url(r'^$', views.dashboard, name='rapidsms-dashboard'),
+    url(r'^admin_dashboard/$', views.admin_dashboard, name='admin-dashboard'),
     url(r'^advanced/$', 'retail.views.advanced', name='advanced'),
     url(r'^sales/$', 'retail.views.sales', name='sales'),
     url(r'^sales/export/$', views.csv_export,
