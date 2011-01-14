@@ -5,6 +5,9 @@ from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from djtables import Table, Column
 from retail.models import Sale
+import locale
+
+locale.setlocale(locale.LC_ALL, '')
 
 def _sale_date(cell):
     return cell.object.purchase_date.date()
@@ -38,7 +41,7 @@ class SaleTable(Table):
         order_by = '-purchase_date'
 
 def _revenue(cell):
-    return cell.object.cached_revenue
+    return locale.format("%d", cell.object.cached_revenue, grouping=True)
 
 def _sale_count(cell):
     return Sale.objects.filter(seller=cell.object).count()

@@ -1,4 +1,5 @@
 {% extends "registration/base.html" %}
+{% load humanize %}
 {% load forms_tags %}
 
 {% block stylesheets %}
@@ -29,7 +30,7 @@
             <tr>
             </tr>
                 <td class="label"> Revenue: </td>
-                <td> {{ seller_summary.revenue }} </td>
+                <td> {{ seller_summary.revenue|intcomma }} </td>
             </tr>
             <tr>
                 <td class="label"> Last sale: </td>
