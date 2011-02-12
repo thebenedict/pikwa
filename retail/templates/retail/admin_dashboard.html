@@ -17,11 +17,11 @@
     <tbody>
         <tr>
             <td>Registered staff:</td>
-            <td>{{ staff_count }}</td>
+            <td>{{ total_staff_count }}</td>
         </tr>
         <tr>
             <td>Number of sales:</td>
-            <td>{{ sale_count }}</td>
+            <td>{{ total_sale_count }}</td>
         </tr>
         <tr>
             <td>Revenue:</td>
@@ -43,7 +43,11 @@
 </div>
 </div>
 {% endfor %}
-</div>-->              
+</div>-->
+<img src="https://chart.googleapis.com/chart?cht=map&chs=277x277&
+chld={% for region in map_data %}TZ-{{ region.number }}|{% endfor %}&
+chd=t:{% for region in map_data %}{% if forloop.last %}{{ region.sale_percent}}{% else %}{{  region.sale_percent  }},{% endif %}{% endfor %}&
+chco=CCCCCC,CC9966,CC0000">             
 {% endblock %}
 {% block right %}
 <!--<div class="module">

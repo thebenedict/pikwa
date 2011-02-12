@@ -20,7 +20,7 @@ from rapidsms.models import Contact
 from pikwa.forms import SaleForm
 from pikwa.tables import SaleTable, PerformanceTable
 
-from retail.models import Sale, Stock, Product
+from retail.models import Sale, Stock, Product, Organization
 
 from datetime import datetime, timedelta, time
 
@@ -85,16 +85,29 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
     context = {}
     org = "ALL"
     
-    staff_count = Contact.objects.count()
-    sale_count = Sale.objects.count()
+    organization_count = Organization.objects.count()
+    total_staff_count = Contact.objects.count()
+    total_sale_count = Sale.objects.count()
     total_revenue = Sale.objects.aggregate(Sum('purchase_price'))
 
-    context['staff_count'] = staff_count
-    context['sale_count'] = sale_count
+    #generate data for heat map
+    map_data=[]
+    for n in range(1,27):
+        #get the capital letter region code per Sale.REGION_CHOICES
+        p = chr(n+64)
+        sls = Sale.objects.filter(region=p)
+        n_padded = '%02d' % n
+        percent_sales = int(round(float(sls.count()) / total_sale_count * 100,0))
+        region_data = {'number': n_padded, 'sale_percent': percent_sales}
+        map_data.append(region_data)
+
+    context['total_staff_count'] = total_staff_count
+    context['total_sale_count'] = total_sale_count
     try:
         context['total_revenue'] = int(total_revenue['purchase_price__sum']*1000)
     except:
         context['total_revenue'] = 0
+    context['map_data'] = map_data
     context['sale_bars'] = get_sale_bars(org)
 
     return  render_to_response(template_name, {},
