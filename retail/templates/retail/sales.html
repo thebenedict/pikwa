@@ -36,6 +36,6 @@ $(function() {
 {% block right %}
 {{ sale_table.as_html }}
 <div>
-<input type="button" onclick="location.href='export';" value="Export CSV"/>
+<input type="button" onclick="location.href='/retail/sales/export/{{ organization.id }}/';" value="Export CSV"/>
 </div>
 {% endblock %}

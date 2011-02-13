@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     url(r'^sales/$', 'retail.views.sales', name='sales'),
     url(r'^sales/export/$', views.csv_export,
         name='export'),
+    url(r'^sales/export/(?P<org_id>\d+)/$', views.csv_export,
+        name='export'),
 #(r'^retail_media/(?P<path>.*)$', 'django.views.static.serve',
 #        {'document_root': '/retail/static'}),
 )

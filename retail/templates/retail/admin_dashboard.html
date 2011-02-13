@@ -29,6 +29,9 @@
         </tr>
     </tbody>
 </table>
+<div>
+<input type="button" onclick="location.href='/retail/sales/export/';" value="Export CSV"/>
+</div>
 </div>
 <!--<div class="module">
 <h2>Inventory</h2>
@@ -58,8 +61,29 @@ chco=989898,FFFFFF,FF0000"><br/>
 <h2>Top Sellers</h2>
 {{ performance_table.as_html }}
 </div>-->
+{% for o in org_table %}
 <div class="module">
-<h2>Recent Sales</h2>
-<img src="http://chart.apis.google.com/chart?&chxt=x&chbh=a,4,7&chs=644x200&cht=bvs&chxl=0:|{% for s in sale_bars %}{% if forloop.last or forloop.first %}{{ s.label }}{% else %}|{{ s.label }}{% endif %}{% endfor %}&chd=t:{% for s in sale_bars %}{% if forloop.first %}{{ s.sale_count }}{% else %},{{ s.sale_count }}{% endif %}{% endfor %}" width="644" height="200" alt="" />
+<h2>{{ o.name }}</h2>
+<table>
+    <tbody>
+        <tr>
+            <td width="25%">Registered Sellers:</td>
+            <td>{{ o.staff_count|intcomma }}</td>
+        </tr>
+        <tr>
+            <td width="25%">Sales to Date:</td>
+            <td>{{ o.sale_count|intcomma }}</td>
+        </tr>
+        <tr>
+            <td width="25%">Revenue:</td>
+            <td>Tsh {{ o.revenue|intcomma }}</td>
+        </tr>
+    </tbody>
+</table>
+<div>
+<input type="button" onclick="location.href='/retail/sales/export/{{ o.id }}/';" value="Export CSV"/>
+<a href='/dashboard/{{ o.id }}/'>View organization page</a>
 </div>
+</div>
+{% endfor %}
 {% endblock %}

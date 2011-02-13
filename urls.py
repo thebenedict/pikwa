@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     
     # RapidSMS core URLs
     url(r'^$', 'retail.views.dashboard', name='rapidsms-dashboard'),
+    url(r'^dashboard/(?P<org_id>\d+)/$', 'retail.views.dashboard', name='rapidsms-dashboard'),
     (r'^accounts/', include('rapidsms.urls.login_logout')),
     
     # RapidSMS contrib app URLs

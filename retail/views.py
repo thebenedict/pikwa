@@ -53,10 +53,20 @@ def get_sale_bars(org):
 
 @login_required
 #TODO take the user somewhere informative if they don't pass the test
-@user_passes_test(lambda u: u.get_profile().organization is not None)
-def dashboard(request, template_name="retail/dashboard.html"):
+@user_passes_test((lambda u: u.get_profile().organization is not None) or (lambda u: u.is_staff))
+def dashboard(request, org_id=None, template_name="retail/dashboard.html"):
     context = {}
-    org = request.user.get_profile().organization
+    if org_id is None and request.user.is_staff:
+        return admin_dashboard(request)
+    elif request.user.is_staff:
+        try:
+            org = Organization.objects.get(id=org_id)
+        except:
+            return HttpResponse(status=404)
+    elif request.user.get_profile().organization is not None:
+        org = request.user.get_profile().organization
+    else:
+        return HttpResponse(status=550)
     
     staff_count = Contact.objects.filter(organization=org).count()
     all_sales = Sale.objects.filter(seller__organization=org)
@@ -83,7 +93,6 @@ def dashboard(request, template_name="retail/dashboard.html"):
 @user_passes_test(lambda u: u.is_staff)
 def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
     context = {}
-    org = "ALL"
     
     organization_count = Organization.objects.count()
     total_staff_count = Contact.objects.count()
@@ -101,6 +110,18 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
         region_data = {'number': n_padded, 'sale_percent': percent_sales}
         map_data.append(region_data)
 
+    #per organization stats table
+    org_table=[]
+    for o in Organization.objects.all():
+        sales = Sale.objects.filter(seller__organization=o)
+        sale_count = sales.count()
+        if sale_count > 0:
+            sellers = Contact.objects.filter(organization=o)
+            staff_count = sellers.count()
+            revenue = sellers.aggregate(Sum('cached_revenue'))['cached_revenue__sum']
+            org_data = {'name': o.display_name, 'id': o.id, 'sale_count': sale_count, 'staff_count': staff_count, 'revenue': revenue}
+            org_table.append(org_data)
+
     context['total_staff_count'] = total_staff_count
     context['total_sale_count'] = total_sale_count
     try:
@@ -108,7 +129,7 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
     except:
         context['total_revenue'] = 0
     context['map_data'] = map_data
-    context['sale_bars'] = get_sale_bars(org)
+    context['org_table'] = org_table
 
     return  render_to_response(template_name, {},
  context_instance=RequestContext(request, context))
@@ -144,14 +165,21 @@ def sales(request, template_name="retail/sales.html"):
     )
 
 @login_required
-@user_passes_test(lambda u: u.get_profile().organization is not None)
-def csv_export(request):
+def csv_export(request, org_id=None):
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=sales_export.csv'
+    try:
+        org = Organization.objects.get(id=org_id)
+    except:
+        org = None
+    if org is None and request.user.is_staff:
+        sale_list = Sale.objects.all().order_by('purchase_date')
+    elif org == request.user.get_profile().organization or request.user.is_staff:
+        sale_list = Sale.objects.filter(seller__organization = org).order_by('purchase_date')
+    else:
+        return HttpResponse(status=550)
 
     writer = csv.writer(response)
-    org = request.user.get_profile().organization
-    sale_list = Sale.objects.filter(seller__organization=org).order_by('purchase_date')
     writer.writerow(['Sale date', 'Retailer', 'Serial #', 'Last name', 'First name', 'Primary phone', 'Secondary phone', 'Region', 'Location notes'])
     for s in sale_list:
         writer.writerow([s.purchase_date.date().strftime("%Y-%m-%d"), s.seller, s.serial, s.lname.capitalize(), s.fname.capitalize(), s.pri_phone, s.sec_phone,  s.get_region_display(), s.description])
