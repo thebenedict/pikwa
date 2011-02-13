@@ -107,6 +107,8 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
         sls = Sale.objects.filter(region=p)
         n_padded = '%02d' % n
         percent_sales = int(round(float(sls.count()) / total_sale_count * 100,0))
+        if percent_sales > 0:
+            percent_sales += 10 #offset for visibility
         region_data = {'number': n_padded, 'sale_percent': percent_sales}
         map_data.append(region_data)
 
