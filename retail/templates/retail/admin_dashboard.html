@@ -11,17 +11,17 @@
 {% block title %}Carbon Keeper{% endblock %}
 {% block left %}
 <div class="module">
-<h2>{{ organization }}</h2>
+<h2>Project Summary</h2>
 
 <table>
     <tbody>
         <tr>
-            <td>Registered staff:</td>
-            <td>{{ total_staff_count }}</td>
+            <td>Registered Sellers:</td>
+            <td>{{ total_staff_count|intcomma }}</td>
         </tr>
         <tr>
-            <td>Number of sales:</td>
-            <td>{{ total_sale_count }}</td>
+            <td>Sales to Date:</td>
+            <td>{{ total_sale_count|intcomma }}</td>
         </tr>
         <tr>
             <td>Revenue:</td>
@@ -44,10 +44,14 @@
 </div>
 {% endfor %}
 </div>-->
-<img src="https://chart.googleapis.com/chart?cht=map&chs=277x277&
+<div class="module">
+<h2>Sales by Region</h2>
+<img src="https://chart.googleapis.com/chart?cht=map&chs=276x269&
 chld={% for region in map_data %}TZ-{{ region.number }}|{% endfor %}&
 chd=t:{% for region in map_data %}{% if forloop.last %}{{ region.sale_percent}}{% else %}{{  region.sale_percent  }},{% endif %}{% endfor %}&
-chco=CCCCCC,CC9966,CC0000">             
+chco=989898,FFFFFF,FF0000"><br/>
+<p class="help-text">Darker colors<br/>indicate more sales</p>             
+</div>
 {% endblock %}
 {% block right %}
 <!--<div class="module">
