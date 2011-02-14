@@ -20,6 +20,7 @@ $(function() {
 {% block title %}Carbon Keeper - Sales{% endblock %}
 
 {% block left %}
+{% if sale_form %}
 <div class="module">
 	<h2>Add a sale</h2>
 
@@ -32,8 +33,12 @@ $(function() {
 		</div>
 	</form>
 </div>
+{% endif %}
 {% endblock %}
 {% block right %}
+{% if not sale_form %}
+<div class="warning"> You are logged in as an administrator and viewing all sales</div>
+{% endif %}
 {{ sale_table.as_html }}
 <div>
 <input type="button" onclick="location.href='/retail/sales/export/{{ organization.id }}/';" value="Export CSV"/>

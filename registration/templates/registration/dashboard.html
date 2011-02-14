@@ -10,7 +10,11 @@
 {% block title %}Carbon Keeper - Staff{% endblock %}
 {% block left %}
 <div class="module">
+    {% if organization %}
 	<h2>Staff for {{ organization }}</h2>
+    {% else %}
+        <h2>All staff</h2>
+    {% endif %}
 	{{ contacts_table.as_html }}<!--{% if contact %}
 
 	<div class="toolbar">

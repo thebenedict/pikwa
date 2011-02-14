@@ -75,10 +75,17 @@ def registration(req, pk=None):
         seller_summary = getSellerSummary(contact)
         bulk_form = BulkRegistrationForm()
 
+    if req.user.is_staff:
+        ctable = ContactTable(Contact.objects.filter(organization=req.user.get_profile().organization), request=req)
+        org = None
+    else:
+        ctable = ContactTable(Contact.objects.all(), request=req)
+        org = req.user.get_profile().organization
+
     return render_to_response(
         "registration/dashboard.html", {
-            "organization": req.user.get_profile().organization,
-            "contacts_table": ContactTable(Contact.objects.filter(organization=req.user.get_profile().organization), request=req),
+            "organization": org,
+            "contacts_table": ctable,
             "contact_form": contact_form,
             "bulk_form": bulk_form,
             "contact": contact,

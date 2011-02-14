@@ -138,13 +138,20 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
 
 
 @login_required
-@user_passes_test(lambda u: u.get_profile().organization is not None)
+@user_passes_test((lambda u: u.get_profile().organization is not None) or (lambda u: u.is_staff))
 def sales(request, template_name="retail/sales.html"):
-    org = request.user.get_profile().organization
+    if request.user.is_staff:
+        org = None
+    else:
+        org = request.user.get_profile().organization
     sale = None
-    sale_form = SaleForm(instance=sale, initial={'purchase_date': datetime.now()})
-    sale_form.fields['seller'].queryset=Contact.objects.filter(organization=org)
-    sale_form.fields['purchase_date']
+    if org:
+        sale_form = SaleForm(instance=sale, initial={'purchase_date': datetime.now()})
+        sale_form.fields['seller'].queryset=Contact.objects.filter(organization=org)
+        sale_form.fields['purchase_date']
+    else:
+        sale_form = None
+    
 
     if request.method == "POST":
         sale_form = SaleForm(data=request.POST)
@@ -157,11 +164,16 @@ def sales(request, template_name="retail/sales.html"):
             sale.product = Product.by_code(sale.serial[0:2].upper())
             sale.save() 
             return HttpResponseRedirect(reverse(sales))
-   
+
+    if org:
+        stb = SaleTable(Sale.objects.filter(seller__organization=request.user.get_profile().organization), request) 
+    else:
+        stb = SaleTable(Sale.objects.all(), request)
+
     return render_to_response(
         "retail/sales.html", {
             "organization": org,
-            "sale_table": SaleTable(Sale.objects.filter(seller__organization=request.user.get_profile().organization), request),
+            "sale_table": stb,
             "sale_form": sale_form,
         }, context_instance=RequestContext(request)
     )
