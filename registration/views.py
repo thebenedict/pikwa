@@ -76,10 +76,10 @@ def registration(req, pk=None):
         bulk_form = BulkRegistrationForm()
 
     if req.user.is_staff:
-        ctable = ContactTable(Contact.objects.filter(organization=req.user.get_profile().organization), request=req)
+        ctable = ContactTable(Contact.objects.exclude(alias='nobody'), request=req)
         org = None
     else:
-        ctable = ContactTable(Contact.objects.all(), request=req)
+        ctable = ContactTable(Contact.objects.filter(organization=req.user.get_profile().organization), request=req)
         org = req.user.get_profile().organization
 
     return render_to_response(

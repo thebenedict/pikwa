@@ -25,3 +25,11 @@
     }
 
     .label { width: 40%; }
+
+.warning {
+    background-color: #FC6;
+    border: 1px solid #F90;
+    font-size: 1.2em;
+    padding: 4px;
+    margin-bottom: 5px;
+}

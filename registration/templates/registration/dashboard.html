@@ -13,6 +13,7 @@
     {% if organization %}
 	<h2>Staff for {{ organization }}</h2>
     {% else %}
+        <div class="warning">You are logged in as an administrator and viewing all project staff</div>
         <h2>All staff</h2>
     {% endif %}
 	{{ contacts_table.as_html }}<!--{% if contact %}
