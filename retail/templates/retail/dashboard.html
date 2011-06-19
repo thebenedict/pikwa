@@ -25,7 +25,7 @@
         </tr>
         <tr>
             <td>Revenue:</td>
-            <td>Tsh {{ total_revenue|intcomma }}</td>
+            <td>UGX {{ total_revenue|intcomma }}</td>
         </tr>
     </tbody>
 </table>
@@ -36,7 +36,7 @@
 	<div class="product_pie_outer">
 	<h4>{{ p.product }}</h4>
         <div class="product_pie_inner">
-	<img src="http://chart.apis.google.com/chart?cht=p&chs=75x75&chd=t:{{ p.sale_count }},{{ p.stock_count }}"><br>
+	<img src="http://chart.apis.google.com/chart?cht=p&chs=75x75&chd=t:{{ p.sold_percent }},{{ p.stock_percent }}"><br>
 	<div class="product_pie_label">{{ p.sale_count }} sold</div> 
 	<div class="product_pie_label">{{ p.stock_count }} in stock</div>
 

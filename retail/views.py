@@ -31,7 +31,11 @@ def get_inventory_list(org):
         stocks = Stock.objects.filter(seller__organization=org, product=p)
         if stocks:
             stock_count = stocks.aggregate(Sum('stock_amount'))
-            inventory_list.append({'product': p, 'sale_count': sale_count, 'stock_count': stock_count['stock_amount__sum']})
+            print "stock_count is %s, sale count is %s, sale_count + stock_count is %s" % (stock_count['stock_amount__sum'], sale_count, sale_count+stock_count['stock_amount__sum'])
+            sold_percent = int(float(sale_count) / (float(sale_count) + float(stock_count['stock_amount__sum'])) * 100)
+            stock_percent = int(float(stock_count['stock_amount__sum']) / (float(sale_count) + float(stock_count['stock_amount__sum'])) * 100)
+            inventory_list.append({'product': p, 'sale_count': sale_count, 'stock_count': stock_count['stock_amount__sum'], \
+                                   'sold_percent': sold_percent, 'stock_percent': stock_percent})
     return inventory_list
 
 def get_sale_bars(org):
@@ -95,21 +99,18 @@ def admin_dashboard(request, template_name="retail/admin_dashboard.html"):
     context = {}
     
     organization_count = Organization.objects.count()
-    total_staff_count = Contact.objects.count()
+    total_staff_count = Contact.objects.count() - 1
     total_sale_count = Sale.objects.count()
     total_revenue = Sale.objects.aggregate(Sum('purchase_price'))
 
     #generate data for heat map
     map_data=[]
-    for n in range(1,27):
-        #get the capital letter region code per Sale.REGION_CHOICES
-        p = chr(n+64)
-        sls = Sale.objects.filter(region=p)
-        n_padded = '%02d' % n
+    for region_number in range(101,117)+range(201,225)+range(301,322)+range(401,419):
+        sls = Sale.objects.filter(region=region_number)
         percent_sales = int(round(float(sls.count()) / total_sale_count * 100,0))
         if percent_sales > 0:
             percent_sales += 10 #offset for visibility
-        region_data = {'number': n_padded, 'sale_percent': percent_sales}
+        region_data = {'number': region_number, 'sale_percent': percent_sales}
         map_data.append(region_data)
 
     #per organization stats table
