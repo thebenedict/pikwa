@@ -39,33 +39,6 @@ class Stock(models.Model):
             return None
 
 class Sale(models.Model):
-    
-    ARUSHA = 'A'
-    DAR_ES_SALAAM = 'B'
-    DODOMA = 'C'
-    IRINGA = 'D'
-    KAGERA = 'E'
-    KIGOMA = 'F'
-    KILIMANJARO = 'G'
-    LINDI = 'H'
-    MANYARA = 'I'
-    MARA = 'J'
-    MBEYA = 'K'
-    MOROGORO = 'L'
-    MTWARA = 'M'
-    MWANZA = 'N'
-    PEMBA_NORTH = 'O'
-    PEMBA_SOUTH = 'P'
-    PWANI = 'Q'
-    RUKWA = 'R'
-    RUVUMA = 'S'
-    SHINYANGA = 'T'
-    SINGIDA = 'U'
-    TABORA = 'V'
-    TANGA = 'W'
-    ZANZIBAR_CENTRAL_SOUTH = 'X'
-    ZANZIBAR_NORTH = 'Y'
-    ZANZIBAR_URBAN_WEST = 'Z'
 
     REGION_CHOICES = (
         (ARUSHA,  'Arusha'),
@@ -125,7 +98,7 @@ class Sale(models.Model):
     @classmethod
     def by_serial (cls, serial):
         try:
-            return cls.objects.get(serial=serial.upper())
+            return cls.objects.get(serial=serial.lower())
         except models.ObjectDoesNotExist:
             return None
 
