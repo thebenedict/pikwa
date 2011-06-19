@@ -1,7 +1,7 @@
 /* vim:set et ts=4 sw=4 */
 
-#inner .col-1 { width: auto; }
-#inner .col-2 { width: 73%; }
+#inner .col-1 { width: 25; }
+#inner .col-2 { width: 75%; }
 
 .col-1 table {
     width: 100%;

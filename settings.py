@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#
+# /usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 
 
@@ -36,9 +37,9 @@ INSTALLED_BACKENDS = {
     #    "ENGINE": "rapidsms.backends.gsm,
     #    "PORT": "/dev/ttyUSB1"
     #},
-    "message_tester": {
-        "ENGINE": "rapidsms.backends.bucket"
-    },
+    #"message_tester": {
+    #    "ENGINE": "rapidsms.backends.bucket"
+    #},
 }
 
 
@@ -53,7 +54,7 @@ INSTALLED_APPS = [
 
     # common dependencies (which don't clutter up the ui).
     "rapidsms.contrib.handlers",
-    "rapidsms.contrib.ajax",
+    ##"rapidsms.contrib.ajax",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -71,19 +72,31 @@ INSTALLED_APPS = [
     # the rapidsms contrib apps.
     "rapidsms.contrib.default",
     "rapidsms.contrib.export",
-    "rapidsms.contrib.httptester",
+    ##"rapidsms.contrib.httptester",
     "rapidsms.contrib.locations",
-    "rapidsms.contrib.messagelog",
+    ##"rapidsms.contrib.messagelog",
     #"rapidsms.contrib.messaging",
     #"rapidsms.contrib.registration",
     "rapidsms.contrib.scheduler",
     # "rapidsms.contrib.search",
     "rapidsms.contrib.echo",
 
+    "rapidsms_httprouter",
+
     # pikwa apps
     "retail",
     "registration",
 ]
+
+SMS_APPS = [
+    "pikwa",
+    "retail",
+    "registration",
+    "blah",
+    "retail.handlers.ping",
+    "rapidsms.contrib.handlers",
+]
+   
 
 #enable user profiles (used for organization reference)
 AUTH_PROFILE_MODULE = 'retail.UserProfile'
@@ -95,8 +108,9 @@ RAPIDSMS_TABS = [
     ("retail.views.dashboard",                              "Overview"),
     ("retail.views.sales",                                  "Sales"),
     ("registration.views.registration",                     "Staff"),
+    ("httprouter-console",                                  "Console"),
     #advanced tab for message log and httptester
-    ("retail.views.advanced",                               "Admin Tools"),
+    #("retail.views.advanced",                               "Admin Tools"),
     #("rapidsms.contrib.messagelog.views.message_log",       "Message Log"),
     #("rapidsms.contrib.messaging.views.messaging",          "Messaging"),
     #("rapidsms.contrib.locations.views.locations",          "Map"),
